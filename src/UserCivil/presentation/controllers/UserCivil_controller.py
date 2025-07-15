@@ -1,23 +1,25 @@
 from src.UserCivil.application.services.UserCivil_service import UserCivilRepository
 from src.UserCivil.domain.scheme.UserCivil_scheme import UserCivilSchema, UserCivil
 from sqlalchemy.orm import Session
+from shared.mysql import get_db
+from fastapi import Depends
 
 class UserCivilController:
 
     def __init__(self):
         self.service = UserCivilRepository()
 
-    def create_userCivil(self, db: Session, user: UserCivilSchema) -> UserCivil:
+    def create_userCivil(self, user: UserCivilSchema, db: Session = Depends(get_db)) -> UserCivil:
         return self.service.create_usercivil(db, user)
     
-    def get_all_userCivil(self, db: Session):
+    def get_all_userCivil(self, db: Session = Depends(get_db)):
         return self.service.get_all_usercivils(db)
     
-    def get_userCivil_by_id(self, db: Session, id_user: int):
+    def get_userCivil_by_id(self,id_user: int, db: Session = Depends(get_db)):
         return self.service.get_usercivil_by_id(db, id_user)
     
-    def delete_userCivil(self, db: Session, id_user: int):
+    def delete_userCivil(self, id_user: int, db: Session = Depends(get_db)):
         return self.service.delete_usercivil(db, id_user)
     
-    def update_userCivil(self, db: Session, id_user: int, user: UserCivilSchema):
+    def update_userCivil(self,  user: UserCivilSchema,  id_user: int, db: Session = Depends(get_db)):
         return self.service.update_usercivil(db, id_user, user)
