@@ -10,10 +10,10 @@ class SensorCheckRepository:
     def create_sensor_check(self, db: Session, sensor_data: SensorCheckBase) -> SensorCheckResponse:
 
             new_sensor = SensorCheck(
-                measurement_unit=sensor_data.measurement_unit,
-                name_sensor=sensor_data.name_sensor,
+                measurementUnit=sensor_data.measurementUnit,
+                nameSensor=sensor_data.nameSensor,
                 information=sensor_data.information,
-                user_civil_id=sensor_data.user_civil_id
+                UserCivil_idUserCivil=sensor_data.UserCivil_idUserCivil
             )
             
             db.add(new_sensor)
@@ -22,21 +22,28 @@ class SensorCheckRepository:
             
             response = JSONResponse(content={
                 "idSensorCheck": new_sensor.idSensorCheck,
-                "measurement_unit":new_sensor.measurement_unit,
-                "name_sensor":new_sensor.name_sensor,
+                "measurementUnit":new_sensor.measurementUnit,
+                "nameSensor":new_sensor.nameSensor,
                 "information":new_sensor.information,
-                "user_civil_id": new_sensor.user_civil_id
+                "UserCivil_idUserCivil": new_sensor.UserCivil_idUserCivil
             }, status_code=201)
 
             return response
             
 
     def get_sensor_check_by_id(self, db: Session, sensor_id: int) -> Optional[SensorCheck]:
-        return db.query(SensorCheck).filter(SensorCheck.id == sensor_id).first()
+        sensors = db.query(SensorCheck).filter(SensorCheck.idSensorCheck == sensor_id).first()
+
+        if sensors is None:
+            raise HTTPException(status_code=404, detail="Error to find sensor")
+        
+        return sensors
 
     def get_sensor_checks_by_user(self, db: Session, user_id: int) -> List[SensorCheck]:
-        return db.query(SensorCheck).filter(SensorCheck.user_civil_id == user_id).all()
+        sensors = db.query(SensorCheck).filter(SensorCheck.UserCivil_idUserCivil == user_id).all()
 
+        return sensors if sensors else []
+    
     def get_all_sensor_checks(self, db: Session) -> List[SensorCheck]:
         return db.query(SensorCheck).all()
 
@@ -56,7 +63,7 @@ class SensorCheckRepository:
         db.refresh(sensor)
         return sensor
 
-    def delete_sensor_check(self, db: Session, sensor_id: int) -> bool:
+    def delete_sensor_check(self, db: Session, sensor_id: int):
         sensor = self.get_sensor_check_by_id(db, sensor_id)
 
         if sensor is None:
@@ -67,8 +74,11 @@ class SensorCheckRepository:
             
         db.delete(sensor)
         db.commit()
-        return True
-    
+
+        return JSONResponse(content={
+            "message": "El sensor ha sido borrado correctamente"
+        }, status_code=200)
+
     def delete_sensorCheck(self, db: Session, id_user: int):
         sensor = db.query(SensorCheck).filter(SensorCheck.idSensorCheck == id_user).first()
 
@@ -77,4 +87,6 @@ class SensorCheckRepository:
         
         db.delete(sensor)
         db.commit()
-        return True
+        return JSONResponse(content={
+            "message": "El sensor ha sido borrado correctamente"
+        }, status_code=200)

@@ -3,17 +3,17 @@ from datetime import datetime
 from typing import Optional
 
 class SensorCheckBase(BaseModel):
-    measurement_unit: str
-    name_sensor: str
+    measurementUnit: str
+    nameSensor: str
     information: str
-    user_civil_id: int
+    UserCivil_idUserCivil: int
     
     class Config:
         from_attributes = True
 
 
 class SensorCheckResponse(SensorCheckBase):
-    id: int
+    idSensorCheck: int
 
     class Config:
         from_attributes = True
