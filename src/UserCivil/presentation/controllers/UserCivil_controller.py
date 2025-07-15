@@ -14,7 +14,10 @@ class UserCivilController:
         return self.service.get_all_usercivils(db)
     
     def get_userCivil_by_id(self, db: Session, id_user: int):
-        return self.get_userCivil_by_id(db, id_user)
+        return self.service.get_usercivil_by_id(db, id_user)
     
     def delete_userCivil(self, db: Session, id_user: int):
-        return self.delete_userCivil(db, id_user)
+        return self.service.delete_usercivil(db, id_user)
+    
+    def update_userCivil(self, db: Session, id_user: int, user: UserCivilSchema):
+        return self.service.update_usercivil(db, id_user, user)

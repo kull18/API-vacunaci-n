@@ -15,7 +15,10 @@ class UserCivil:
         return self.repository.get_all_usercivils()
     
     def get_userCivil_by_id(self, db: Session,id_user: int):
-        return self.get_userCivil_by_id(db, id_user)
+        return self.repository.get_userCivil_by_id(db, id_user)
     
     def delete_userCivil(self, db: Session, id_user: int):
-        return self.delete_userCivil(db, id_user)
+        return self.repository.delete_usercivil(db, id_user)
+    
+    def update_userCivil(self, db: Session, id_user: int, user: UserCivilSchema):
+        return self.repository.update_userCivil(db, id_user, user)
