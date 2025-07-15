@@ -9,5 +9,5 @@ class SensorCheck(Base):
     measurement_unit = Column(String(45))
     name_sensor = Column(String(45))
     information = Column(String(45))
-    user_civil_id = Column(Integer,ForeignKey('user_civil.idUserCivil'))
+    user_civil_id = Column(Integer,ForeignKey('UserCivil.idUserCivil'))
     user_civil = relationship("UserCivil", back_populates="sensor_checks")
