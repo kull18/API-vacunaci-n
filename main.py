@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from src.UserCivil.presentation.routes.UserCivil_routes import userCivilRoutes
 
-#title: API-rest pacientes 
+#title: API-rest vacunación 
 #version: 1.0.0
 
 app = FastAPI()
@@ -15,5 +16,5 @@ app.add_middleware(
 )
 
 #init routes 
-app.add_route()
+app.include_router(userCivilRoutes)
 
