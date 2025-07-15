@@ -18,7 +18,7 @@ class SensorCheckService:
     def get_sensorCheck_by_id(self, db: Session, id_sensor: int):
         return self.repositorie.get_sensor_check_by_id(db, id_sensor)
     
-    def delete_sensorCheck(self, db: Session, id_sensor: int):
+    def delete_sensorCheck(self, db: Session, id_sensor: int) -> bool:
         return self.repositorie.delete_sensor_check(db, id_sensor)
 
     def update_sensorCheck(self, db: Session, id_sensor: int, sensor: SensorCheckBase):
