@@ -1,10 +1,11 @@
 from sqlalchemy import Column, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
+from src.UserCivilVaccinated.application.models import Vaccine  
 from shared.mysql import Base
 
 class UserCivilVaccinated(Base):
-    __tablename__ = 'user_civil_vaccinated'
+    __tablename__ = 'UserCivilVaccinated'
 
     UserCivil_idUserCivil = Column(
         Integer, 
@@ -13,7 +14,7 @@ class UserCivilVaccinated(Base):
     )
     UserCivil_UserMedicVaccined = Column(
         Integer, 
-        ForeignKey('UserCivil.UserMedicVaccined'),
+        ForeignKey('UserCivil.UserMedicVaccined'), 
         primary_key=True
     )
     Vaccine_idVaccines = Column(
@@ -22,11 +23,18 @@ class UserCivilVaccinated(Base):
         primary_key=True
     )
 
-    date = Column(
-        DateTime, 
-        default=datetime.utcnow,
+    date = Column(DateTime, default=datetime.utcnow)
+
+    usercivil = relationship(
+        "UserCivil", 
+        foreign_keys=[UserCivil_idUserCivil],
+        back_populates="vaccinations_as_patient"
     )
 
-    UserCivil_idUserCivil = relationship("UserCivil", back_populates="vaccinations")
-    UserCivil_UserMedicVaccined = relationship("UserMedicPersonal", back_populates="vaccinations_performed")
-    Vaccine_idVaccines = relationship("Vaccine", back_populates="vaccinations")
+    user_medic = relationship(
+        "UserCivil", 
+        foreign_keys=[UserCivil_UserMedicVaccined],
+        back_populates="vaccinations_as_medic"
+    )
+
+    vaccine = relationship("Vaccine", back_populates="usercivilvaccinated")

@@ -3,15 +3,16 @@ from fastapi.responses import JSONResponse
 from fastapi import HTTPException
 from datetime import datetime
 from typing import List, Optional
-from src.UserCivilVaccinated.domain.scheme.UserCivilVaccinated_scheme import (
-    UserCivilVaccinatedSchema,
-    UserCivilVaccinatedResponse
-)
+from src.UserCivilVaccinated.domain.scheme.UserCivilVaccinated_scheme import UserCivilVaccinatedSchema
 from src.UserCivilVaccinated.application.models.UserCivilVaccinated_model import UserCivilVaccinated
+from src.UserCivilVaccinated.application.models.Vaccine import Vaccine
+from src.SensorCheck.application.models.SensorCheck_model import SensorCheck
+from src.UserCivil.application.models.UserCivil_model import UserCivil
+from sqlalchemy.orm import aliased
 
 class UserCivilVaccinatedRepository:
 
-    def create_vaccination_record(self, db: Session, vaccination_data: UserCivilVaccinatedSchema) -> UserCivilVaccinatedResponse:
+    def create_vaccination_record(self, db: Session, vaccination_data: UserCivilVaccinatedSchema):
         
         new_vaccination = UserCivilVaccinated(
             UserCivil_idUserCivil=vaccination_data.UserCivil_idUserCivil,
@@ -42,6 +43,18 @@ class UserCivilVaccinatedRepository:
     
     def get_all_vaccination_record(self, db: Session):
         return db.query(UserCivilVaccinated).all()
+    
+    def get_vaccinations_with_values(self, db: Session):
+
+        UserMedicVaccined = aliased(UserCivil)
+
+        return (
+            db.query(UserCivil,UserCivilVaccinated,Vaccine)
+            .join(UserCivil, UserCivilVaccinated.UserCivil_idUserCivil == UserCivil.idUserCivil)
+            .join(UserMedicVaccined, UserMedicVaccined.UserMedicVaccined == UserCivilVaccinated.UserCivil_UserMedicVaccined)
+            .join(Vaccine, Vaccine.idVaccines == UserCivilVaccinated.Vaccine_idVaccines)
+            .all()
+        )
 
     def get_vaccinations_by_user(self, db: Session, user_civil_id: int) -> List[UserCivilVaccinated]:
         return db.query(UserCivilVaccinated).filter(
