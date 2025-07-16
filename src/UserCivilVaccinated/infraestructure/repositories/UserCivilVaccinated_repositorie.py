@@ -57,11 +57,13 @@ class UserCivilVaccinatedRepository:
         db.refresh(vaccination)
         return vaccination
 
-    def delete_vaccination_record(self,db: Session,user_civil_id: int,medic_vaccinator_id: int,vaccine_id: int) -> bool:
+    def delete_vaccination_record(self,db: Session,user_civil_id: int,medic_vaccinator_id: int,vaccine_id: int):
         vaccination = self.get_vaccination_record(db, user_civil_id, medic_vaccinator_id, vaccine_id)
         if vaccination is None:
             raise HTTPException(status_code=404, detail="Vaccination record not found")
 
         db.delete(vaccination)
         db.commit()
-        return True
+        return JSONResponse(content={
+            "message": ""
+        }, status_code=201)

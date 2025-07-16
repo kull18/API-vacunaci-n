@@ -10,18 +10,15 @@ class UserCivilVaccinated(Base):
         Integer, 
         ForeignKey('UserCivil.idUserCivil'), 
         primary_key=True,
-        name='UserCivil_idUserCivil'
     )
     medic_vaccinator_id = Column(
         Integer, 
         ForeignKey('UserCivil.UserMedicVaccined'),
-        name='UserCivil_UserMedicVaccined',
         primary_key=True
     )
     vaccine_id = Column(
         Integer, 
         ForeignKey('Vaccine.idVaccines'),
-        name='Vaccine_idVaccines',
         primary_key=True
     )
     vaccination_date = Column(
