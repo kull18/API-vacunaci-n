@@ -6,27 +6,27 @@ from shared.mysql import Base
 class UserCivilVaccinated(Base):
     __tablename__ = 'user_civil_vaccinated'
 
-    user_civil_id = Column(
+    UserCivil_idUserCivil = Column(
         Integer, 
         ForeignKey('UserCivil.idUserCivil'), 
         primary_key=True,
     )
-    medic_vaccinator_id = Column(
+    UserCivil_UserMedicVaccined = Column(
         Integer, 
         ForeignKey('UserCivil.UserMedicVaccined'),
         primary_key=True
     )
-    vaccine_id = Column(
+    Vaccine_idVaccines = Column(
         Integer, 
         ForeignKey('Vaccine.idVaccines'),
         primary_key=True
     )
-    vaccination_date = Column(
+
+    date = Column(
         DateTime, 
         default=datetime.utcnow,
-        name='date DATE TIME'  
     )
 
-    user_civil = relationship("UserCivil", back_populates="vaccinations")
-    vaccinator = relationship("UserMedicPersonal", back_populates="vaccinations_performed")
-    vaccine = relationship("Vaccine", back_populates="vaccinations")
+    UserCivil_idUserCivil = relationship("UserCivil", back_populates="vaccinations")
+    UserCivil_UserMedicVaccined = relationship("UserMedicPersonal", back_populates="vaccinations_performed")
+    Vaccine_idVaccines = relationship("Vaccine", back_populates="vaccinations")
