@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.UserCivil.presentation.routes.UserCivil_routes import userCivilRoutes
 from src.UserCivilVaccinated.presentation.routes.UserCivilVaccinated_rotues import userCivilVaccinated
 from src.SensorCheck.presentation.routes.SensorCheck_routes import sensorRoutes
-
+from src.Vaccine.presentation.routes.Vaccine_routes import vaccineRoutes
 
 #title: API-rest vacunación 
 #version: 1.0.0
@@ -22,5 +22,6 @@ app.add_middleware(
 app.include_router(userCivilRoutes)
 app.include_router(sensorRoutes)
 app.include_router(userCivilVaccinated)
+app.include_router(vaccineRoutes)
 
 

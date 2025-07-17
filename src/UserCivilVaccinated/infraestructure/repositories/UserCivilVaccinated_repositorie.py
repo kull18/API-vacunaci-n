@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import List, Optional
 from src.UserCivilVaccinated.domain.scheme.UserCivilVaccinated_scheme import UserCivilVaccinatedSchema
 from src.UserCivilVaccinated.application.models.UserCivilVaccinated_model import UserCivilVaccinated
-from src.UserCivilVaccinated.application.models.Vaccine import Vaccine
+from src.Vaccine.application.models.Vaccine import Vaccine
 from src.SensorCheck.application.models.SensorCheck_model import SensorCheck
 from src.UserCivil.application.models.UserCivil_model import UserCivil
 from sqlalchemy.orm import aliased
