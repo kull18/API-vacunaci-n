@@ -56,6 +56,7 @@ class SensorCheckRepository:
             )
             
         update_dict = update_data.dict(exclude_unset=True)
+        
         for key, value in update_dict.items():
             setattr(sensor, key, value)
             

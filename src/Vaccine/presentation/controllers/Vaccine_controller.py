@@ -17,7 +17,7 @@ class VaccineController:
         return self.service.get_vaccines(db)
 
     def update_vaccine(self, id_vaccine: int, vaccine_data: VaccineScheme, db: Session = Depends(get_db)):
-        return self.service.update_vaccine(id_vaccine, vaccine_data)
+        return self.service.update_vaccine(db, id_vaccine, vaccine_data)
 
     def delete_vaccine(self, id_vaccine: int, db: Session = Depends(get_db)):
-        return self.service.delete_vaccine(id_vaccine)
+        return self.service.delete_vaccine(db, id_vaccine)

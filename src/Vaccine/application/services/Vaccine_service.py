@@ -14,8 +14,8 @@ class VaccineService:
     def get_vaccines(self, db: Session):
         return self.repositorie.get_all_vaccines(db)
     
-    def update_vaccine(self, id_vaccine: int, vaccine_data: VaccineScheme):
-        return self.repositorie.update_vaccine(id_vaccine, vaccine_data)
+    def update_vaccine(self,db: Session, id_vaccine: int, vaccine_data: VaccineScheme):
+        return self.repositorie.update_vaccine(db, id_vaccine, vaccine_data)
     
-    def delete_vaccine(self, id_vaccine: int):
-        return self.repositorie.delete_vaccine(id_vaccine)
+    def delete_vaccine(self,db: Session, id_vaccine: int):
+        return self.repositorie.delete_vaccine(db, id_vaccine)

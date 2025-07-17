@@ -41,7 +41,10 @@ class VaccineRepositorie:
         if vaccine is None:
             return HTTPException(status_code=404, detail="La vacuna no ha sido encontrada")
         
-        for key, value in vaccine_data.dict().items:
+
+        update_data = vaccine_data.dict(exclude_unset=True)
+
+        for key, value in update_data.items():
             setattr(vaccine, key, value)
 
         db.commit()
