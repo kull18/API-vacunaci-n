@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from src.UserCivilVaccinated.application.models import Vaccine  
+from src.Vaccine.application.models import Vaccine  
 from shared.mysql import Base
 
 class UserCivilVaccinated(Base):
