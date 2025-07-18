@@ -9,3 +9,4 @@ class Vaccine(Base):
     nameVaccine = Column(String(45))
 
     usercivilvaccinated = relationship("UserCivilVaccinated", back_populates="vaccine")
+    vaccine_boxes = relationship("VaccineBoxVaccine", back_populates="vaccine")  
