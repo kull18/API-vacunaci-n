@@ -4,7 +4,8 @@ from fastapi import HTTPException
 from typing import List, Optional
 from src.VaccineBoxVaccine.application.models.VaccineBoxVaccine_model import VaccineBoxVaccine
 from src.VaccineBoxVaccine.domain.schema.VaccineBoxVaccine_schema import VaccineBoxVaccineSchema
-
+from src.Vaccine.application.models.Vaccine import Vaccine
+from src.VaccineBox.application.models.VaccineBox import VaccineBox
 
 class VaccineBoxVaccineRepository:
 
@@ -31,6 +32,13 @@ class VaccineBoxVaccineRepository:
 
     def get_all(self, db: Session) -> List[VaccineBoxVaccine]:
         return db.query(VaccineBoxVaccine).all()
+    
+    def get_vaccineBoxVaccine_with_values(self, db: Session):
+        return (db.query(VaccineBox, VaccineBoxVaccine, Vaccine)
+                .join(VaccineBox, VaccineBoxVaccine.VaccineBox_idVaccineBox == VaccineBox.idVaccineBox)
+                .join(Vaccine, VaccineBoxVaccine.Vaccine_idVaccines == Vaccine.idVaccines)
+                .all()
+            )
 
     def delete(self, db: Session, box_id: int, vaccine_id: int) -> JSONResponse:
         record = self.get_by_ids(db, box_id, vaccine_id)
