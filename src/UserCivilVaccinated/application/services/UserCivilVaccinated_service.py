@@ -13,6 +13,10 @@ class UserCivilVaccinatedService:
     def get_userCivilVaccinated(self, db: Session, user_civil_id: int, medic_vaccinator_id: int, vaccine_id: int):
         return self.repositorie.get_vaccination_record(db, user_civil_id, medic_vaccinator_id, vaccine_id)
     
+
+    def get_all_Usercivil_vaccinations(self, db: Session):
+        return self.repositorie.get_all_user_civil_vaccinations(db)
+    
     def get_userCivilVaccinated_with_values(self, db: Session):
         return self.repositorie.get_vaccinations_with_values(db)
     

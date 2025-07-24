@@ -15,6 +15,8 @@ userCivilVaccinated.get('/', status_code=status.HTTP_200_OK) (controller.get_all
 
 userCivilVaccinated.get('/by-user/{user_civil_id}', status_code=status.HTTP_200_OK) (controller.get_userCivilVaccinated_by_user)
 
+
+
 userCivilVaccinated.get('/with-values/', status_code=status.HTTP_200_OK)(controller.get_userCivilVaccinated_with_values)
 
 userCivilVaccinated.get('/{user_civil_id}/{medic_vaccinator_id}/{vaccine_id}', status_code=status.HTTP_200_OK) (controller.get_userCivilVaccinated)
