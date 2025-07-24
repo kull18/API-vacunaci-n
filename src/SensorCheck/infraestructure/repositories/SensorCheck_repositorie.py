@@ -1,7 +1,10 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from fastapi import HTTPException, status
-from typing import List
 from fastapi.responses import JSONResponse
+from typing import List
+import json
+from scipy.stats import binom
 
 from src.SensorCheck.application.models.SensorCheck_model import SensorCheck
 from src.SensorCheck.domain.schemas.SensorCheck_schema import SensorCheckBase, SensorCheckUpdate
@@ -80,3 +83,60 @@ class SensorCheckRepository:
         except Exception as e:
             db.rollback()
             raise HTTPException(status_code=500, detail=f"Error al eliminar el sensor: {str(e)}")
+
+    def get_alcohol_probabilities(self, db: Session):
+        try:
+            total = db.query(func.count(SensorCheck.idSensorCheck))\
+                      .filter(SensorCheck.nameSensor == "alcoholemia")\
+                      .scalar()
+
+            if total == 0:
+                return []
+
+            results = db.query(SensorCheck.measurementUnit, func.count(SensorCheck.idSensorCheck))\
+                        .filter(SensorCheck.nameSensor == "alcoholemia")\
+                        .group_by(SensorCheck.measurementUnit)\
+                        .all()
+
+            probabilities = [
+                {"category": level, "probability": count / total}
+                for level, count in results
+            ]
+
+            return probabilities
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Error al calcular probabilidades: {str(e)}")
+
+    def create_sensor_check_and_calc_binomial(self, db: Session, sensor_data: SensorCheck):
+        try:
+            n = 10  # número de pruebas
+            k = 5   # éxitos deseados
+
+            total = db.query(SensorCheck)\
+                      .filter(SensorCheck.nameSensor == sensor_data.nameSensor)\
+                      .count()
+
+            exitos = db.query(SensorCheck)\
+                       .filter(
+                           SensorCheck.nameSensor == sensor_data.nameSensor,
+                           SensorCheck.information == sensor_data.information
+                       ).count()
+
+            p = exitos / total if total > 0 else 0
+
+            prob_binomial = binom.pmf(k, n, p)
+
+            response = json.dumps({
+                "sensor": {
+                    "measurementUnit": sensor_data.measurementUnit,
+                    "nameSensor": sensor_data.nameSensor,
+                    "information": sensor_data.information,
+                    "UserCivil_idUserCivil": sensor_data.UserCivil_idUserCivil
+                },
+                "probabilidad_binomial": prob_binomial,
+                "parametros": {"n": n, "k": k, "p": p}
+            })
+
+            return response
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Error al calcular binomial: {str(e)}")

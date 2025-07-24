@@ -12,6 +12,5 @@ class UserCivilSchema(BaseModel):
 class UserCivil(UserCivilSchema):
     idUserCivil: int
 
-model_config = {
-    "from_attributes": True
-}
+    class Config:
+        orm_mode = True

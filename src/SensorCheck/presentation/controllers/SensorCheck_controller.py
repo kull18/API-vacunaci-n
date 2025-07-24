@@ -9,14 +9,17 @@ class SensorCheckController:
     def __init__(self):
         self.service = SensorCheckService()
 
-    def create_sensorCheck(self, sensor: SensorCheckBase, db: Session = Depends(get_db)):
-        return self.service.create_sensorCheck(db, sensor)
+    async def create_sensorCheck(self, sensor: SensorCheckBase, db: Session = Depends(get_db)):
+        return await self.service.create_sensorCheck(db, sensor)
 
     def get_all_sensorCheck(self, db: Session = Depends(get_db)):
         return self.service.get_all_sensorCheck(db)
 
     def get_sensorCheck_by_id(self, id_sensor: int, db: Session = Depends(get_db)):
         return self.service.get_sensorCheck_by_id(db, id_sensor)
+    
+    def get_alcoholemia(self, db: Session = Depends(get_db)):
+        return self.service.get_alcoholemia(db)
 
     def update_sensorCheck(self, id_sensor: int, sensor: SensorCheckBase, db: Session = Depends(get_db)):
         return self.service.update_sensorCheck(db, id_sensor, sensor)

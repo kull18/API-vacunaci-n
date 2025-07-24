@@ -4,31 +4,46 @@ from sqlalchemy.orm import Session
 from src.SensorCheck.infraestructure.repositories.SensorCheck_repositorie import SensorCheckRepository
 from src.SensorCheck.infraestructure.repositories.SensorCheckRabbitmq_repositorie import RabbitMQRepository
 from src.SensorCheck.domain.schemas.SensorCheck_schema import SensorCheckBase
+from src.SensorCheck.infraestructure.repositories.SensorCheckSocket_repositorie import WebSocketClientRepository
+from dotenv import load_dotenv
+import os
+from fastapi.exceptions import HTTPException
+
+load_dotenv()
 
 class SensorCheckService:
 
     def __init__(self):
         self.repositorie = SensorCheckRepository()
-        self.rabbitRepositorie = RabbitMQRepository()     
+        self.rabbitRepositorie = RabbitMQRepository()
+        self.socketrepositorie = WebSocketClientRepository()
 
-    def create_sensorCheck(self, db: Session, sensor: SensorCheckBase) -> JSONResponse:
+    async def create_sensorCheck(self, db: Session, sensor: SensorCheckBase) -> JSONResponse:
         message = self.repositorie.create_sensor_check(db, sensor)
+        print("Sensor guardado en BD:", message)
 
-        sensor_data = {
-            "idSensorCheck": message.idSensorCheck,
-            "measurementUnit": message.measurementUnit,
-            "nameSensor": message.nameSensor,
-            "information": message.information,
-            "UserCivil_idUserCivil": message.UserCivil_idUserCivil
-        }
+        if not message:
+            raise HTTPException(status_code=500, detail="No se pudo crear el sensor")
 
-        message_json = json.dumps(sensor_data)
+        try:
+            response = await self.socketrepositorie.send_sensor_data(message)
+        except Exception as e:
+            print("Error enviando por WebSocket:", e)
 
-        queue_name = self.get_queue_name_by_sensor_type(sensor.nameSensor)
-        self.rabbitRepositorie.send_message(queue_name, message_json)
+        return JSONResponse(
+            content={
+                "idSensorCheck": message.idSensorCheck,
+                "measurementUnit": message.measurementUnit,
+                "nameSensor": message.nameSensor,
+                "information": message.information,
+                "UserCivil_idUserCivil": message.UserCivil_idUserCivil,
+            },
+            status_code=201
+        )
+    
 
-        return JSONResponse(content=sensor_data, status_code=201)
-
+    def get_alcoholemia(self, db: Session):
+        return self.repositorie.get_alcohol_probabilities(db)
 
     def get_queue_name_by_sensor_type(self, sensor_type: str) -> str:
         sensor_type = sensor_type.lower()
@@ -41,6 +56,8 @@ class SensorCheckService:
                 return "light_queue"
             case _:
                 return "default_sensor_queue"
+
+    # probability logic (comentado para futura implementación)
 
     def get_all_sensorCheck(self, db: Session):
         return self.repositorie.get_all_sensor_checks(db)
