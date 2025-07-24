@@ -18,6 +18,8 @@ sensorRoutes.post('/', status_code=status.HTTP_201_CREATED, response_model=Senso
 sensorRoutes.get('/', status_code=status.HTTP_200_OK, response_model=List[SensorCheckResponse]) (sensorController.get_all_sensorCheck)
 
 
+sensorRoutes.get('/alcoholemia', status_code=status.HTTP_200_OK) (sensorController.get_alcoholemia)
+
 sensorRoutes.get('/{id_sensor}', status_code=status.HTTP_200_OK, response_model=SensorCheckResponse) (sensorController.get_sensorCheck_by_id)
 
 
