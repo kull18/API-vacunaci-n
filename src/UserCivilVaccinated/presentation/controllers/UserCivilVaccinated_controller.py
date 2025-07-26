@@ -18,6 +18,9 @@ class UserCivilVaccinatedController:
     def get_all_userCivilVaccinated(self, db: Session = Depends(get_db)):
         return self.service.get_all_userCivilVaccinated(db)
     
+    def get_all_usercivil_vaccinations(self, db: Session = Depends(get_db)):
+        return self.service.get_all_Usercivil_vaccinations(db)
+    
     def get_userCivilVaccinated_with_values(self, db: Session = Depends(get_db)):
         return self.service.get_userCivilVaccinated_with_values(db)
 

@@ -20,13 +20,14 @@ class SensorCheckService:
 
     async def create_sensorCheck(self, db: Session, sensor: SensorCheckBase) -> JSONResponse:
         message = self.repositorie.create_sensor_check(db, sensor)
-        print("Sensor guardado en BD:", message)
 
         if not message:
             raise HTTPException(status_code=500, detail="No se pudo crear el sensor")
 
         try:
-            response = await self.socketrepositorie.send_sensor_data(message)
+            probabilities = self.repositorie.get_alcohol_probabilities()
+            await self.socketrepositorie.send_sensor_data(probabilities)
+            
         except Exception as e:
             print("Error enviando por WebSocket:", e)
 
@@ -73,3 +74,6 @@ class SensorCheckService:
 
     def get_sensorCheck_by_user(self, db: Session, user_id: int):
         return self.repositorie.get_sensor_checks_by_user(db, user_id)
+    
+    def get_anilze_temperatures(self, db: Session):
+        return self.repositorie.analizar_temperaturas(db)
