@@ -29,3 +29,6 @@ class SensorCheckController:
 
     def get_sensorCheck_by_user(self, user_id: int, db: Session = Depends(get_db)):
         return self.service.get_sensorCheck_by_user(db, user_id)
+    
+    def  get_analize_temperature(self, db: Session = Depends(get_db)):
+        return self.service.get_anilze_temperatures(db)
