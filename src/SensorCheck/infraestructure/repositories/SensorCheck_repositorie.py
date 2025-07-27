@@ -34,7 +34,7 @@ class SensorCheckRepository:
             raise HTTPException(status_code=404, detail="Sensor no encontrado")
         return sensor
 
-    def get_sensor_checks_by_user(self, db: Session, user_id: int) -> List[SensorCheck]:
+    def get_sensor_checks_by_user(self, db: Session, user_id: str) -> List[SensorCheck]:
         try:
             return db.query(SensorCheck).filter(SensorCheck.UserCivil_idUserCivil == user_id).all()
         except Exception as e:
@@ -90,15 +90,15 @@ class SensorCheckRepository:
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error al calcular probabilidades: {str(e)}")
 
-    def obtener_temperaturas_por_nombre_sensor(self, db: Session):
-        from src.SensorCheck.application.models.SensorCheck_model import SensorCheck
-        temperaturas = db.query(SensorCheck.information).filter(SensorCheck.nameSensor == "temperature").all()
-        return [float(t[0]) for t in temperaturas if t[0] is not None]
+    def obtener_temperaturas_por_nombre_sensor(self, db: Session) -> List[float]:
+        temperaturas = db.query(SensorCheck.information)\
+                         .filter(SensorCheck.nameSensor == "temperatura")\
+                         .all()
+        return [t[0] for t in temperaturas if t[0] is not None]
 
     def analizar_temperaturas(self, db: Session):
         temperaturas = self.obtener_temperaturas_por_nombre_sensor(db)
-
-        temperaturas = [t for t in temperaturas if t is not None and not np.isnan(t)]
+        temperaturas = [t for t in temperaturas if not np.isnan(t)]
 
         if not temperaturas:
             raise HTTPException(status_code=404, detail="No se encontraron datos válidos de temperatura para analizar")
@@ -108,21 +108,20 @@ class SensorCheckRepository:
 
         if len(temperaturas) < 3:
             return {
-                "media": float(media) if not np.isnan(media) else None,
-                "desviacion_estandar": float(desviacion) if not np.isnan(desviacion) else None,
+                "media": float(media),
+                "desviacion_estandar": float(desviacion),
                 "shapiro_stat": None,
                 "shapiro_p": None,
                 "interpretacion": "No hay suficientes datos para aplicar el test de normalidad"
             }
 
         stat, p = shapiro(temperaturas)
-
         resultado = "Probablemente sigue una distribución normal" if p > 0.05 else "Probablemente NO sigue una distribución normal"
 
         return {
-            "media": float(media) if not np.isnan(media) else None,
-            "desviacion_estandar": float(desviacion) if not np.isnan(desviacion) else None,
-            "shapiro_stat": float(stat) if not np.isnan(stat) else None,
-            "shapiro_p": float(p) if not np.isnan(p) else None,
+            "media": float(media),
+            "desviacion_estandar": float(desviacion),
+            "shapiro_stat": float(stat),
+            "shapiro_p": float(p),
             "interpretacion": resultado
         }

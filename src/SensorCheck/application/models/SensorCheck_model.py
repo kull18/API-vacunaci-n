@@ -2,6 +2,10 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from shared.mysql import Base
 from src.UserCivilVaccinated.application.models.UserCivilVaccinated_model import UserCivilVaccinated
+from sqlalchemy import Float
+
+
+
 
 class SensorCheck(Base):
     __tablename__ = 'SensorCheck'
@@ -9,7 +13,7 @@ class SensorCheck(Base):
     idSensorCheck = Column(Integer, primary_key=True,autoincrement=True)   
     measurementUnit = Column(String(45))
     nameSensor = Column(String(45))
-    information = Column(String(45))
+    information = Column(Float)   
     UserCivil_idUserCivil = Column(Integer,ForeignKey('UserCivilVaccinated.UserCivil_idUserCivil'))
 
     sensor_idUserCivil = relationship(

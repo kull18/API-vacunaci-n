@@ -5,7 +5,7 @@ from typing import Optional
 class SensorCheckBase(BaseModel):
     measurementUnit: str
     nameSensor: str
-    information: str
+    information: float
     UserCivil_idUserCivil: int
 
     class Config:
@@ -14,7 +14,7 @@ class SensorCheckBase(BaseModel):
 class SensorCheckUpdate(BaseModel):
     measurementUnit: Optional[str] = None
     nameSensor: Optional[str] = None
-    information: Optional[str] = None
+    information: Optional[float] = None
     UserCivil_idUserCivil: Optional[int] = None
 
     class Config:
