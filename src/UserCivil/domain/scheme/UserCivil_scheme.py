@@ -1,13 +1,21 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class UserCivilSchema(BaseModel):
     fol: str
-    corporalTemperature: int
-    alcoholBreat: int
+    corporalTemperature: float
+    alcoholBreat: float
     isVaccinated: int
-    UserMedicVaccined: int
     name: str
-    lastname: str
+    firstLastname: str
+    secondLastname: str
+    CURP: Optional[str]
+    dayBirthday: Optional[int]
+    monthBirthday: Optional[str]
+    yearBirthday: Optional[str]
+    yearsOld: Optional[int]
+    school: Optional[str]
+    schoolGrade: Optional[str]
 
 class UserCivil(UserCivilSchema):
     idUserCivil: int

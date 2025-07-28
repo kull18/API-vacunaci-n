@@ -1,34 +1,36 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from shared.mysql import Base
-from src.UserCivil.application.models.User import User
+from sqlalchemy import Column, Float
 
 class UserCivil(Base):
     __tablename__ = "UserCivil"
 
     idUserCivil = Column(Integer, primary_key=True, autoincrement=True)
     fol = Column(String(45))
-    corporalTemperature = Column(Integer)
-    alcoholBreat = Column(Integer)
+    corporalTemperature = Column(Float)
+    alcoholBreat = Column(Float)
     isVaccinated = Column(Integer)
-    
-    # Aquí se declara explícitamente como ForeignKey
-    UserMedicVaccined = Column(Integer, ForeignKey("User.idUser"))
-
     name = Column(String(45))
-    lastname = Column(String(45))
+    firstLastname = Column(String(45))
+    secondLastname = Column(String(45))
+    CURP = Column(String(45))
+    dayBirthday = Column(Integer)
+    monthBirthday = Column(String(45))
+    yearBirthday = Column(String(45))
+    yearsOld = Column(Integer)
+    school = Column(String(45))
+    schoolGrade = Column(String(45))
 
-    # Relaciones con UserCivilVaccinated (si es necesario)
+    # Relaciones inversas hacia UserCivilVaccinated, **dentro** de la clase
     vaccinations_as_patient = relationship(
-      "UserCivilVaccinated",
-      foreign_keys="[UserCivilVaccinated.UserCivil_idUserCivil]",
-      back_populates="usercivil_patient" 
+        "UserCivilVaccinated",
+        back_populates="usercivil_patient",
+        foreign_keys="[UserCivilVaccinated.UserCivil_idUserCivil]"
     )
 
     vaccinations_as_medic = relationship(
-      "UserCivilVaccinated",
-       foreign_keys="[UserCivilVaccinated.UserCivil_UserMedicVaccined]",
-       back_populates="usercivil_medic"  
+        "UserCivilVaccinated",
+        back_populates="usercivil_medic",
+        foreign_keys="[UserCivilVaccinated.UserCivil_UserMedicVaccined]"
     )
-
-    medic = relationship("User", backref="civils_vaccinated")

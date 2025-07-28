@@ -1,10 +1,8 @@
 from sqlalchemy.orm import Session
-from src.UserCivil.domain.scheme.UserCivil_scheme import UserCivil as UserCivilResponse
-from src.UserCivil.application.models.UserCivil_model import UserCivil
-from src.UserCivil.domain.scheme.UserCivil_scheme import UserCivilSchema
-from fastapi.responses import JSONResponse
+from typing import List, Optional
 from fastapi import HTTPException
-from typing import List
+
+from src.UserCivil.domain.scheme.UserCivil_scheme import UserCivilSchema
 from src.UserCivil.application.models.UserCivil_model import UserCivil
 
 class UserCivilRepository:
@@ -15,47 +13,53 @@ class UserCivilRepository:
             corporalTemperature=user.corporalTemperature,
             alcoholBreat=user.alcoholBreat,
             isVaccinated=user.isVaccinated,
-            UserMedicVaccined=user.UserMedicVaccined,
             name=user.name,
-            lastname=user.lastname,
+            firstLastname=user.firstLastname,
+            secondLastname=user.secondLastname,
+            CURP=user.CURP,
+            dayBirthday=user.dayBirthday,
+            monthBirthday=user.monthBirthday,
+            yearBirthday=user.yearBirthday,
+            yearsOld=user.yearsOld,
+            school=user.school,
+            schoolGrade=user.schoolGrade,
         )
 
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
-        print("user", new_user)
+        print("Created UserCivil:", new_user)
 
-        return new_user  # Devuelves el objeto ORM para que el endpoint lo serialice
+        return new_user
 
-
-    def get_usercivil_by_id(self, db: Session, id_user: int):
+    def get_usercivil_by_id(self, db: Session, id_user: int) -> UserCivil:
         user = db.query(UserCivil).filter(UserCivil.idUserCivil == id_user).first()
-
         if user is None:
             raise HTTPException(status_code=404, detail="UserCivil not found")
-        
         return user
-         
 
     def get_all_usercivils(self, db: Session) -> List[UserCivil]:
         return db.query(UserCivil).all()
 
-    def update_usercivil(self, db: Session, id_user: int, user_data: UserCivilSchema):
+    def update_usercivil(self, db: Session, id_user: int, user_data: UserCivilSchema) -> UserCivil:
         user = db.query(UserCivil).filter(UserCivil.idUserCivil == id_user).first()
         if user is None:
             raise HTTPException(status_code=404, detail="UserCivil not found")
-        for key, value in user_data.dict().items():
+
+        for key, value in user_data.dict(exclude_unset=True).items():
             setattr(user, key, value)
+
         db.commit()
         db.refresh(user)
+        print("Updated UserCivil:", user)
         return user
 
-    def delete_usercivil(self, db: Session, id_user: int):
+    def delete_usercivil(self, db: Session, id_user: int) -> bool:
         user = db.query(UserCivil).filter(UserCivil.idUserCivil == id_user).first()
-
         if user is None:
             raise HTTPException(status_code=404, detail="UserCivil not found")
         
         db.delete(user)
         db.commit()
+        print(f"Deleted UserCivil with id {id_user}")
         return True
