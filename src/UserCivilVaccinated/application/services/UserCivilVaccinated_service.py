@@ -31,3 +31,6 @@ class UserCivilVaccinatedService:
 
     def delete_userCivilVaccinated(self, db: Session, user_civil_id: int, medic_vaccinator_id: int, vaccine_id: int):
         return self.repositorie.delete_vaccination_record(db, user_civil_id, medic_vaccinator_id, vaccine_id)
+    
+    def get_userCivilVaccinated_with_values_id(self, db: Session, id: int):
+        return self.repositorie.get_vaccinations_with_values_id(db, id)

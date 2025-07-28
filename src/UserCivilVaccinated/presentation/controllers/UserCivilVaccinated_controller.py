@@ -32,3 +32,6 @@ class UserCivilVaccinatedController:
 
     def delete_userCivilVaccinated(self, user_civil_id: int, medic_vaccinator_id: int, vaccine_id: int, db: Session = Depends(get_db)):
         return self.service.delete_userCivilVaccinated(db, user_civil_id, medic_vaccinator_id, vaccine_id)
+    
+    def get_userCivilVaccinated_with_values_id(self, id: int,db: Session = Depends(get_db)):
+        return self.service.get_userCivilVaccinated_with_values_id(db, id)

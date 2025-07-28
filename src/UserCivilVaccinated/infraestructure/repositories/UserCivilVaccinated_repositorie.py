@@ -42,54 +42,14 @@ class UserCivilVaccinatedRepository:
         ).first()
 
     def get_all_user_civil_vaccinations(self, db: Session):
-        return db.query(UserCivilVaccinated).\
-            options(
-                joinedload(UserCivilVaccinated.usercivil_patient),
-                joinedload(UserCivilVaccinated.usercivil_medic),
-                joinedload(UserCivilVaccinated.vaccine)
-            ).all()
+        return db.query(UserCivilVaccinated).options(
+            joinedload(UserCivilVaccinated.usercivil_patient),
+            joinedload(UserCivilVaccinated.usercivil_medic),
+            joinedload(UserCivilVaccinated.vaccine)
+        ).all()
 
     def get_all_vaccination_record(self, db: Session):
         return db.query(UserCivilVaccinated).all()
-
-    def get_vaccinations_with_values(self, db: Session):
-        UserMedicVaccined = aliased(UserCivil)
-
-        results = (
-            db.query(UserCivil, UserCivilVaccinated, Vaccine, UserMedicVaccined)
-            .join(UserCivil, UserCivilVaccinated.UserCivil_idUserCivil == UserCivil.idUserCivil)
-            .join(UserMedicVaccined, UserMedicVaccined.idUserCivil == UserCivilVaccinated.UserCivil_UserMedicVaccined)
-            .join(Vaccine, Vaccine.idVaccines == UserCivilVaccinated.Vaccine_idVaccines)
-            .all()
-        )
-
-        output = []
-        vaccine_count_map = defaultdict(int)
-
-        for patient, vaccinated, vaccine, medic in results:
-            vaccine_count_map[vaccine.nameVaccine] += 1
-            output.append({
-                "date": vaccinated.date,
-                "patient": {
-                    "id": patient.idUserCivil,
-                    "name": patient.name,
-                    "lastname": patient.lastname,
-                },
-                "medic": {
-                    "id": medic.idUserCivil,
-                    "name": medic.name,
-                    "lastname": medic.lastname,
-                },
-                "vaccine": {
-                    "id": vaccine.idVaccines,
-                    "name": vaccine.nameVaccine,
-                }
-            })
-
-        return {
-            "vaccinations": output,
-            "vaccineCounts": dict(vaccine_count_map)
-        }
 
     def get_vaccinations_by_user(self, db: Session, user_civil_id: int) -> List[UserCivilVaccinated]:
         return db.query(UserCivilVaccinated).filter(
@@ -119,3 +79,100 @@ class UserCivilVaccinatedRepository:
         return JSONResponse(content={
             "message": "UserCivilVaccinated ha sido borrado"
         }, status_code=201)
+
+    def get_vaccinations_with_values(self, db: Session):
+        Patient = aliased(UserCivil)
+        Medic = aliased(UserCivil)
+
+        results = (
+            db.query(
+                UserCivilVaccinated,
+                Vaccine,
+                Patient,
+                Medic
+            )
+            .join(Vaccine, UserCivilVaccinated.Vaccine_idVaccines == Vaccine.idVaccines)
+            .join(Patient, UserCivilVaccinated.UserCivil_idUserCivil == Patient.idUserCivil)
+            .join(Medic, UserCivilVaccinated.UserCivil_UserMedicVaccined == Medic.idUserCivil)
+            .all()
+        )
+
+        output = []
+        vaccine_count_map = defaultdict(int)
+
+        for vaccinated, vaccine, patient, medic in results:
+            vaccine_count_map[vaccine.nameVaccine] += 1
+            output.append({
+                "date": vaccinated.date,
+                "patient": {
+                    "id": patient.idUserCivil,
+                    "name": patient.name,
+                    "lastname": patient.firstLastname,
+                },
+                "medic": {
+                    "id": medic.idUserCivil,
+                    "name": medic.name,
+                    "lastname": medic.firstLastname,
+                },
+                "vaccine": {
+                    "id": vaccine.idVaccines,
+                    "name": vaccine.nameVaccine,
+                }
+            })
+
+        return {
+            "vaccinations": output,
+            "vaccineCounts": dict(vaccine_count_map)
+        }
+
+    def get_vaccinations_with_values_id(self, db: Session, id: int):
+        Patient = aliased(UserCivil)
+        Medic = aliased(UserCivil)
+
+        results = (
+            db.query(
+                UserCivilVaccinated,
+                Vaccine,
+                Patient,
+                Medic
+            )
+            .join(Vaccine, UserCivilVaccinated.Vaccine_idVaccines == Vaccine.idVaccines)
+            .join(Patient, UserCivilVaccinated.UserCivil_idUserCivil == Patient.idUserCivil)
+            .join(Medic, UserCivilVaccinated.UserCivil_UserMedicVaccined == Medic.idUserCivil)
+            .filter(Patient.idUserCivil == id)
+            .all()
+        )
+
+        if not results:
+            return {
+                "vaccinations": [],
+                "vaccineCounts": {}
+            }
+
+        output = []
+        vaccine_count_map = defaultdict(int)
+
+        for vaccinated, vaccine, patient, medic in results:
+            vaccine_count_map[vaccine.nameVaccine] += 1
+            output.append({
+                "date": vaccinated.date,
+                "patient": {
+                    "id": patient.idUserCivil,
+                    "name": patient.name,
+                    "lastname": patient.firstLastname,
+                },
+                "medic": {
+                    "id": medic.idUserCivil,
+                    "name": medic.name,
+                    "lastname": medic.firstLastname,
+                },
+                "vaccine": {
+                    "id": vaccine.idVaccines,
+                    "name": vaccine.nameVaccine,
+                }
+            })
+
+        return {
+            "vaccinations": output,
+            "vaccineCounts": dict(vaccine_count_map)
+        }

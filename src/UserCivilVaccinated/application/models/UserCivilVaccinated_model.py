@@ -12,7 +12,7 @@ class UserCivilVaccinated(Base):
         primary_key=True
     )
     UserCivil_UserMedicVaccined = Column(
-        Integer, ForeignKey('UserCivil.UserMedicVaccined'),
+        Integer, ForeignKey('UserCivil.idUserCivil'),  # Apunta a idUserCivil (medic)
         primary_key=True
     )
     Vaccine_idVaccines = Column(
@@ -23,21 +23,20 @@ class UserCivilVaccinated(Base):
     date = Column(DateTime, default=datetime.utcnow)
 
     usercivil_patient = relationship(
-      "UserCivil",
-      foreign_keys=[UserCivil_idUserCivil],
-      back_populates="vaccinations_as_patient"
+        "UserCivil",
+        foreign_keys=[UserCivil_idUserCivil],
+        back_populates="vaccinations_as_patient"
     )
 
     usercivil_medic = relationship(
-      "UserCivil",
-      foreign_keys=[UserCivil_UserMedicVaccined],
-      back_populates="vaccinations_as_medic"
+        "UserCivil",
+        foreign_keys=[UserCivil_UserMedicVaccined],
+        back_populates="vaccinations_as_medic"
     )
 
     sensor_checks = relationship(
-    "SensorCheck",
-    back_populates="sensor_idUserCivil"
+        "SensorCheck",
+        back_populates="sensor_idUserCivil"
     )    
 
     vaccine = relationship("Vaccine", back_populates="usercivilvaccinateds")
-
