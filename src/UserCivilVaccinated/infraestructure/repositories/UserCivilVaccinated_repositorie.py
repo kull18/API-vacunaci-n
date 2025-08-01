@@ -91,9 +91,9 @@ class UserCivilVaccinatedRepository:
                 Patient,
                 Medic
             )
-            .join(Vaccine, UserCivilVaccinated.Vaccine_idVaccines == Vaccine.idVaccines)
-            .join(Patient, UserCivilVaccinated.UserCivil_idUserCivil == Patient.idUserCivil)
-            .join(Medic, UserCivilVaccinated.UserCivil_UserMedicVaccined == Medic.idUserCivil)
+            .outerjoin(Vaccine, UserCivilVaccinated.Vaccine_idVaccines == Vaccine.idVaccines)
+            .outerjoin(Patient, UserCivilVaccinated.UserCivil_idUserCivil == Patient.idUserCivil)
+            .outerjoin(Medic, UserCivilVaccinated.UserCivil_UserMedicVaccined == Medic.idUserCivil)
             .all()
         )
 
@@ -101,22 +101,23 @@ class UserCivilVaccinatedRepository:
         vaccine_count_map = defaultdict(int)
 
         for vaccinated, vaccine, patient, medic in results:
-            vaccine_count_map[vaccine.nameVaccine] += 1
+            if vaccine:
+                vaccine_count_map[vaccine.nameVaccine] += 1
             output.append({
                 "date": vaccinated.date,
                 "patient": {
-                    "id": patient.idUserCivil,
-                    "name": patient.name,
-                    "lastname": patient.firstLastname,
+                    "id": patient.idUserCivil if patient else None,
+                    "name": patient.name if patient else None,
+                    "lastname": patient.firstLastname if patient else None,
                 },
                 "medic": {
-                    "id": medic.idUserCivil,
-                    "name": medic.name,
-                    "lastname": medic.firstLastname,
+                    "id": medic.idUserCivil if medic else None,
+                    "name": medic.name if medic else None,
+                    "lastname": medic.firstLastname if medic else None,
                 },
                 "vaccine": {
-                    "id": vaccine.idVaccines,
-                    "name": vaccine.nameVaccine,
+                    "id": vaccine.idVaccines if vaccine else None,
+                    "name": vaccine.nameVaccine if vaccine else None,
                 }
             })
 

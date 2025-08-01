@@ -22,3 +22,6 @@ class UserCivilService:
     
     def update_userCivil(self, db: Session, id_user: int, user: UserCivilSchema):
         return self.repository.update_userCivil(db, id_user, user)
+   
+    def update_is_vaccinated(self, db: Session, id_user: int) -> UserCivil:
+     return self.repository.update_is_vaccinated(db, id_user)

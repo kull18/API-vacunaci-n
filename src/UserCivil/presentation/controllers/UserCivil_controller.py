@@ -26,3 +26,6 @@ class UserCivilController:
     
     def update_userCivil(self,  user: UserCivilSchema,  id_user: int, db: Session = Depends(get_db)):
         return self.service.update_usercivil(db, id_user, user)
+    
+    def update_isVaccinated(self, id_user: int, db: Session = Depends(get_db)) -> UserCivil:
+     return self.service.update_is_vaccinated(db, id_user)
