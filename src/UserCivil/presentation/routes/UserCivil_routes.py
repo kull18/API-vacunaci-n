@@ -15,6 +15,8 @@ userCivilRoutes.post("/", status_code=status.HTTP_201_CREATED, response_model=Us
      
 userCivilRoutes.get('/', status_code=status.HTTP_200_OK) (controller.get_all_userCivil)
 
+userCivilRoutes.put('/vaccinated/{id_user}') (controller.update_isVaccinated)
+
 userCivilRoutes.get("/{user_id}", status_code=status.HTTP_200_OK, response_model=UserCivil) (controller.get_userCivil_by_id)
     
 userCivilRoutes.delete("/{user_id}",status_code=status.HTTP_200_OK) (controller.delete_userCivil)

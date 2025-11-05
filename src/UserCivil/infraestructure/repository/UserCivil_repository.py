@@ -63,3 +63,13 @@ class UserCivilRepository:
         db.commit()
         print(f"Deleted UserCivil with id {id_user}")
         return True
+    def update_is_vaccinated(self, db: Session, id_user: int) -> UserCivil:
+      user = db.query(UserCivil).filter(UserCivil.idUserCivil == id_user).first()
+      if user is None:
+        raise HTTPException(status_code=404, detail="UserCivil not found")
+
+      user.isVaccinated = 1
+      db.commit()
+      db.refresh(user)
+      print(f"Updated isVaccinated for UserCivil id {id_user} 1")
+      return user
