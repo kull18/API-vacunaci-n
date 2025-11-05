@@ -1,7 +1,7 @@
 from collections import defaultdict
 from datetime import datetime
 from typing import List, Optional
-
+from sqlalchemy import func
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException
 from sqlalchemy.orm import Session, joinedload, aliased
@@ -125,6 +125,32 @@ class UserCivilVaccinatedRepository:
             "vaccinations": output,
             "vaccineCounts": dict(vaccine_count_map)
         }
+    
+    def get_vaccine_counts(self, db: Session):
+
+     results = (
+        db.query(
+            Vaccine.nameVaccine,
+            func.count(UserCivilVaccinated.Vaccine_idVaccines).label('doses_applied')
+        )
+        .join(
+            UserCivilVaccinated,
+            Vaccine.idVaccines == UserCivilVaccinated.Vaccine_idVaccines
+        )
+        .group_by(Vaccine.nameVaccine)
+        .order_by(func.count(UserCivilVaccinated.Vaccine_idVaccines).desc())
+        .all()
+    )
+
+     return {
+        "vaccineCounts": [
+            {
+                "vaccineName": vaccine_name,
+                "dosesApplied": doses_applied
+            }
+            for vaccine_name, doses_applied in results
+        ]
+    }
 
     def get_vaccinations_with_values_id(self, db: Session, id: int):
         Patient = aliased(UserCivil)

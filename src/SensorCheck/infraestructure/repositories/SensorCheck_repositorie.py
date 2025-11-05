@@ -1,13 +1,14 @@
 import numpy as np
-from scipy.stats import binom, shapiro
+from scipy.stats import shapiro
 from typing import List
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
-from sqlalchemy import func
+from sqlalchemy import func, case
 from sqlalchemy.orm import Session
 
 from src.SensorCheck.application.models.SensorCheck_model import SensorCheck
 from src.SensorCheck.domain.schemas.SensorCheck_schema import SensorCheckBase, SensorCheckUpdate
+from src.UserCivil.application.models.UserCivil_model import UserCivil
 
 
 class SensorCheckRepository:
@@ -71,29 +72,67 @@ class SensorCheckRepository:
 
     def get_alcohol_probabilities(self, db: Session):
         try:
-            total = db.query(func.count(SensorCheck.idSensorCheck))\
-                      .filter(SensorCheck.nameSensor == "alcoholemia")\
-                      .scalar()
+            # Estadísticas básicas
+            stats = db.query(
+                func.count(UserCivil.idUserCivil).label("total_records"),
+                func.avg(UserCivil.alcoholBreat).label("average"),
+                func.min(UserCivil.alcoholBreat).label("minimum"),
+                func.max(UserCivil.alcoholBreat).label("maximum"),
+                func.sum(case((UserCivil.alcoholBreat > 0, 1), else_=0)).label("positive_cases")
+            ).filter(UserCivil.alcoholBreat.isnot(None)).first()
 
-            if total == 0:
-                return []
+            if stats.total_records == 0:
+                return {
+                    "message": "No hay datos de alcoholemia disponibles",
+                    "statistics": None,
+                    "distribution": []
+                }
 
-            results = db.query(SensorCheck.measurementUnit, func.count(SensorCheck.idSensorCheck))\
-                        .filter(SensorCheck.nameSensor == "alcoholemia")\
-                        .group_by(SensorCheck.measurementUnit)\
-                        .all()
+            alcohol_category = case(
+                (UserCivil.alcoholBreat == 0, "Negativo"),
+                (UserCivil.alcoholBreat.between(0.01, 0.25), "Bajo"),
+                (UserCivil.alcoholBreat.between(0.26, 0.50), "Medio"),
+                (UserCivil.alcoholBreat > 0.50, "Alto"),
+                else_="Sin datos"
+            )
 
-            return [
-                {"category": level, "probability": count / total}
-                for level, count in results
-            ]
+            distribution = db.query(
+                alcohol_category.label("category"),
+                func.count(UserCivil.idUserCivil).label("count")
+            ).filter(UserCivil.alcoholBreat.isnot(None)).group_by(alcohol_category).all()
+
+            return {
+                "statistics": {
+                    "totalRecords": stats.total_records,
+                    "average": round(float(stats.average or 0), 4),
+                    "minimum": round(float(stats.minimum or 0), 4),
+                    "maximum": round(float(stats.maximum or 0), 4),
+                    "positiveCases": stats.positive_cases,
+                    "positiveRate": round((stats.positive_cases / stats.total_records) * 100, 2)
+                },
+                "distribution": [
+                    {
+                        "category": category,
+                        "count": count,
+                        "probability": round(count / stats.total_records, 4),
+                        "percentage": round((count / stats.total_records) * 100, 2)
+                    }
+                    for category, count in distribution
+                ]
+            }
+
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Error al calcular probabilidades: {str(e)}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"Error al calcular estadísticas de alcoholemia: {str(e)}"
+            )
 
     def obtener_temperaturas_por_nombre_sensor(self, db: Session) -> List[float]:
-        temperaturas = db.query(SensorCheck.information)\
-                         .filter(SensorCheck.nameSensor == "temperatura")\
-                         .all()
+        temperaturas = (
+            db.query(SensorCheck.information)
+            .filter(SensorCheck.nameSensor == "temperatura")
+            .all()
+        )
         return [t[0] for t in temperaturas if t[0] is not None]
 
     def analizar_temperaturas(self, db: Session):
@@ -116,7 +155,11 @@ class SensorCheckRepository:
             }
 
         stat, p = shapiro(temperaturas)
-        resultado = "Probablemente sigue una distribución normal" if p > 0.05 else "Probablemente NO sigue una distribución normal"
+        resultado = (
+            "Probablemente sigue una distribución normal"
+            if p > 0.05
+            else "Probablemente NO sigue una distribución normal"
+        )
 
         return {
             "media": float(media),
