@@ -1,3 +1,4 @@
+# application/services/UserCivilVaccinated_service.py
 from src.UserCivilVaccinated.infraestructure.repositories.UserCivilVaccinated_repositorie import UserCivilVaccinatedRepository
 from sqlalchemy.orm import Session
 from src.UserCivilVaccinated.domain.scheme.UserCivilVaccinated_scheme import UserCivilVaccinatedSchema
@@ -13,7 +14,6 @@ class UserCivilVaccinatedService:
     def get_userCivilVaccinated(self, db: Session, user_civil_id: int, medic_vaccinator_id: int, vaccine_id: int):
         return self.repositorie.get_vaccination_record(db, user_civil_id, medic_vaccinator_id, vaccine_id)
     
-
     def get_all_Usercivil_vaccinations(self, db: Session):
         return self.repositorie.get_all_user_civil_vaccinations(db)
     
@@ -34,3 +34,10 @@ class UserCivilVaccinatedService:
     
     def get_userCivilVaccinated_with_values_id(self, db: Session, id: int):
         return self.repositorie.get_vaccinations_with_values_id(db, id)
+    
+    # 🆕 NUEVO MÉTODO
+    def get_patient_vaccines(self, db: Session, patient_id: int):
+        """
+        Obtiene las vacunas aplicadas a un paciente específico
+        """
+        return self.repositorie.get_patient_vaccines_by_id(db, patient_id)

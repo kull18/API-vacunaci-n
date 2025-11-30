@@ -1,3 +1,4 @@
+# presentation/controllers/UserCivilVaccinated_controller.py
 from src.UserCivilVaccinated.application.services.UserCivilVaccinated_service import UserCivilVaccinatedService
 from sqlalchemy.orm import Session
 from fastapi import Depends
@@ -33,5 +34,12 @@ class UserCivilVaccinatedController:
     def delete_userCivilVaccinated(self, user_civil_id: int, medic_vaccinator_id: int, vaccine_id: int, db: Session = Depends(get_db)):
         return self.service.delete_userCivilVaccinated(db, user_civil_id, medic_vaccinator_id, vaccine_id)
     
-    def get_userCivilVaccinated_with_values_id(self, id: int,db: Session = Depends(get_db)):
+    def get_userCivilVaccinated_with_values_id(self, id: int, db: Session = Depends(get_db)):
         return self.service.get_userCivilVaccinated_with_values_id(db, id)
+    
+    # 🆕 NUEVO MÉTODO
+    def get_patient_vaccines(self, patient_id: int, db: Session = Depends(get_db)):
+        """
+        Obtiene todas las vacunas aplicadas a un paciente específico
+        """
+        return self.service.get_patient_vaccines(db, patient_id)
