@@ -43,10 +43,10 @@ class SensorCheckService:
         )
     
 
-    def get_alcoholemia(self, db: Session):
+    async def get_alcoholemia(self, db: Session):
         return self.repositorie.get_alcohol_probabilities(db)
 
-    def get_queue_name_by_sensor_type(self, sensor_type: str) -> str:
+    async def get_queue_name_by_sensor_type(self, sensor_type: str) -> str:
         sensor_type = sensor_type.lower()
         match sensor_type:
             case "temperature":
@@ -57,23 +57,21 @@ class SensorCheckService:
                 return "light_queue"
             case _:
                 return "default_sensor_queue"
-
-    # probability logic (comentado para futura implementación)
-
-    def get_all_sensorCheck(self, db: Session):
+            
+    async def get_all_sensorCheck(self, db: Session):
         return self.repositorie.get_all_sensor_checks(db)
 
-    def get_sensorCheck_by_id(self, db: Session, id_sensor: int):
+    async def get_sensorCheck_by_id(self, db: Session, id_sensor: int):
         return self.repositorie.get_sensor_check_by_id(db, id_sensor)
 
-    def delete_sensorCheck(self, db: Session, id_sensor: int):
+    async def delete_sensorCheck(self, db: Session, id_sensor: int):
         return self.repositorie.delete_sensor_check(db, id_sensor)
 
-    def update_sensorCheck(self, db: Session, id_sensor: int, sensor: SensorCheckBase) -> bool:
+    async def update_sensorCheck(self, db: Session, id_sensor: int, sensor: SensorCheckBase) -> bool:
         return self.repositorie.update_sensor_check(db, id_sensor, sensor)
 
-    def get_sensorCheck_by_user(self, db: Session, user_id: int):
+    async def get_sensorCheck_by_user(self, db: Session, user_id: int):
         return self.repositorie.get_sensor_checks_by_user(db, user_id)
     
-    def get_anilze_temperatures(self, db: Session):
+    async def get_anilze_temperatures(self, db: Session):
         return self.repositorie.analizar_temperaturas(db)
