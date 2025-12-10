@@ -130,9 +130,13 @@ class SensorCheckRepository:
             )
 
     def obtener_temperaturas_por_nombre_sensor(self, db: Session) -> List[float]:
+        """
+        Obtiene todas las temperaturas corporales de los pacientes registrados
+        en la tabla UserCivil.
+        """
         temperaturas = (
-            db.query(SensorCheck.information)
-            .filter(SensorCheck.nameSensor == "temperatura")
+            db.query(UserCivil.corporalTemperature)
+            .filter(UserCivil.corporalTemperature.isnot(None))
             .all()
         )
         return [t[0] for t in temperaturas if t[0] is not None]
