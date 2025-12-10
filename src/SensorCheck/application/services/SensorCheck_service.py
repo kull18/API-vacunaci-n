@@ -11,6 +11,7 @@ from fastapi.exceptions import HTTPException
 
 load_dotenv()
 
+
 class SensorCheckService:
 
     def __init__(self):
@@ -25,9 +26,9 @@ class SensorCheckService:
             raise HTTPException(status_code=500, detail="No se pudo crear el sensor")
 
         try:
-            probabilities = self.repositorie.get_alcohol_probabilities()
+            probabilities = self.repositorie.get_alcohol_probabilities(db)
             await self.socketrepositorie.send_sensor_data(probabilities)
-            
+
         except Exception as e:
             print("Error enviando por WebSocket:", e)
 
@@ -38,10 +39,11 @@ class SensorCheckService:
                 "nameSensor": message.nameSensor,
                 "information": message.information,
                 "UserCivil_idUserCivil": message.UserCivil_idUserCivil,
+                "idVaccineBox": message.idVaccineBox,          # ✅ Nuevo campo
+                "idSensorsVaccine": message.idSensorsVaccine,  # ✅ Nuevo campo
             },
             status_code=201
         )
-    
 
     def get_alcoholemia(self, db: Session):
         return self.repositorie.get_alcohol_probabilities(db)
@@ -74,6 +76,6 @@ class SensorCheckService:
 
     def get_sensorCheck_by_user(self, db: Session, user_id: int):
         return self.repositorie.get_sensor_checks_by_user(db, user_id)
-    
+
     def get_anilze_temperatures(self, db: Session):
         return self.repositorie.analizar_temperaturas(db)

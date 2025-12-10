@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from src.Vaccine.application.models import Vaccine  
 from shared.mysql import Base
 
@@ -12,7 +13,7 @@ class UserCivilVaccinated(Base):
         primary_key=True
     )
     UserCivil_UserMedicVaccined = Column(
-        Integer, ForeignKey('UserCivil.idUserCivil'),  # Apunta a idUserCivil (medic)
+        Integer, ForeignKey('UserCivil.idUserCivil'),
         primary_key=True
     )
     Vaccine_idVaccines = Column(
@@ -20,7 +21,11 @@ class UserCivilVaccinated(Base):
         primary_key=True
     )
 
-    date = Column(DateTime, default=datetime.utcnow)
+    # 👇 Cambiado aquí - usa una función lambda para la zona horaria
+    date = Column(
+        DateTime, 
+        default=lambda: datetime.now(ZoneInfo("America/Mexico_City"))
+    )
 
     usercivil_patient = relationship(
         "UserCivil",

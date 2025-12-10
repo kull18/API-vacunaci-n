@@ -43,3 +43,10 @@ class UserCivilVaccinatedController:
         Obtiene todas las vacunas aplicadas a un paciente específico
         """
         return self.service.get_patient_vaccines(db, patient_id)
+    
+# En UserCivilVaccinatedController
+    def get_patient_health_summary(self, patient_id: int, db: Session = Depends(get_db)):
+      """
+       Obtiene resumen completo de salud: última dosis, temperaturas, alertas
+      """
+      return self.service.get_patient_health_summary(patient_id, db)

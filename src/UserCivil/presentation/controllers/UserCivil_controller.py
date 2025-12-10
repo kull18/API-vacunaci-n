@@ -22,7 +22,7 @@ class UserCivilController:
         return self.service.get_userCivil_by_id(db, id_user)
     
     def delete_userCivil(self, id_user: int, db: Session = Depends(get_db)):
-        return self.service.delete_usercivil(db, id_user)
+        return self.service.delete_userCivil(db, id_user)
     
     def update_userCivil(self,  user: UserCivilSchema,  id_user: int, db: Session = Depends(get_db)):
         return self.service.update_usercivil(db, id_user, user)

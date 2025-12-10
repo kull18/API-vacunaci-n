@@ -41,3 +41,9 @@ class UserCivilVaccinatedService:
         Obtiene las vacunas aplicadas a un paciente específico
         """
         return self.repositorie.get_patient_vaccines_by_id(db, patient_id)
+    
+    def get_patient_health_summary(self, patient_id: int, db: Session):
+        """
+        Obtiene resumen completo de salud del paciente
+        """
+        return self.repositorie.get_patient_health_summary(db, patient_id)

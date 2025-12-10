@@ -59,3 +59,6 @@ userCivilVaccinated.put('/{user_civil_id}/{medic_vaccinator_id}/{vaccine_id}', s
 userCivilVaccinated.delete('/{user_civil_id}/{medic_vaccinator_id}/{vaccine_id}', status_code=status.HTTP_204_NO_CONTENT)(
     controller.delete_userCivilVaccinated
 )
+userCivilVaccinated.get("/summary/{patient_id}", status_code=status.HTTP_200_OK) (
+    controller.get_patient_health_summary
+)
