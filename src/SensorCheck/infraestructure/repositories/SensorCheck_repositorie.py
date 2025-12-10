@@ -12,8 +12,8 @@ from src.UserCivil.application.models.UserCivil_model import UserCivil
 
 
 class SensorCheckRepository:
-
     def create_sensor_check(self, db: Session, sensor_data: SensorCheckBase) -> SensorCheck:
+        print("[DEBUG] Datos recibidos en repositorio SensorCheck:", sensor_data)
         try:
             new_sensor = SensorCheck(
                 measurementUnit=sensor_data.measurementUnit,
@@ -24,9 +24,11 @@ class SensorCheckRepository:
             db.add(new_sensor)
             db.commit()
             db.refresh(new_sensor)
+            print("[DEBUG] Sensor insertado en BD:", new_sensor)
             return new_sensor
         except Exception as e:
             db.rollback()
+            print("[ERROR] Excepción al crear sensor:", e)
             raise HTTPException(status_code=500, detail=f"Error al crear sensor: {str(e)}")
 
     def get_sensor_check_by_id(self, db: Session, sensor_id: int) -> SensorCheck:

@@ -12,23 +12,23 @@ class SensorCheckController:
     async def create_sensorCheck(self, sensor: SensorCheckBase, db: Session = Depends(get_db)):
         return await self.service.create_sensorCheck(db, sensor)
 
-    def get_all_sensorCheck(self, db: Session = Depends(get_db)):
-        return self.service.get_all_sensorCheck(db)
+    async def get_all_sensorCheck(self, db: Session = Depends(get_db)):
+        return await self.service.get_all_sensorCheck(db)
 
-    def get_sensorCheck_by_id(self, id_sensor: int, db: Session = Depends(get_db)):
-        return self.service.get_sensorCheck_by_id(db, id_sensor)
+    async def get_sensorCheck_by_id(self, id_sensor: int, db: Session = Depends(get_db)):
+        return await self.service.get_sensorCheck_by_id(db, id_sensor)
     
-    def get_alcoholemia(self, db: Session = Depends(get_db)):
-        return self.service.get_alcoholemia(db)
+    async def get_alcoholemia(self, db: Session = Depends(get_db)):
+        return await self.service.get_alcoholemia(db)
 
-    def update_sensorCheck(self, id_sensor: int, sensor: SensorCheckBase, db: Session = Depends(get_db)):
-        return self.service.update_sensorCheck(db, id_sensor, sensor)
+    async def update_sensorCheck(self, id_sensor: int, sensor: SensorCheckBase, db: Session = Depends(get_db)):
+        return await self.service.update_sensorCheck(db, id_sensor, sensor)
 
-    def delete_sensorCheck(self,  id_sensor: int, db: Session = Depends(get_db)):
-        return self.service.delete_sensorCheck(db, id_sensor)
+    async def delete_sensorCheck(self,  id_sensor: int, db: Session = Depends(get_db)):
+        return await self.service.delete_sensorCheck(db, id_sensor)
 
-    def get_sensorCheck_by_user(self, user_id: int, db: Session = Depends(get_db)):
-        return self.service.get_sensorCheck_by_user(db, user_id)
+    async def get_sensorCheck_by_user(self, user_id: int, db: Session = Depends(get_db)):
+        return await self.service.get_sensorCheck_by_user(db, user_id)
     
-    def  get_analize_temperature(self, db: Session = Depends(get_db)):
-        return self.service.get_anilze_temperatures(db)
+    async def get_analize_temperature(self, db: Session = Depends(get_db)):
+        return await self.service.get_anilze_temperatures(db)
